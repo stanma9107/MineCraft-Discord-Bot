@@ -1,6 +1,9 @@
 {
   "dependencies": {
+    "@aws-sdk/client-ecs": "^3.16.0",
+    "aws-sdk": "^2.907.0",
     "axios": "^0.21.1",
-    "discord.js": "^12.5.3"
+    "discord.js": "^12.5.3",
+    "rcon-client": "^4.2.3"
   }
 }
