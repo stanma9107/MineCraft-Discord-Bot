@@ -73,6 +73,7 @@ function getPublicIP(taskData){
     })
     return PublicIPs;
 }
+
 const client = new Discord.Client();
 
 client.on("ready", () => {
@@ -90,11 +91,44 @@ client.on("message", msg => {
                     if(taskData){
                         getPublicIP(taskData).then((ips) => {
                             ips.forEach((ip) => {
-                                channel.send(`MineCraft Server is on: ${ip}:25565`)
+                                axios.get(
+                                    `https://mcapi.us/server/status?ip=${ip}&port=25565`
+                                ).then(({data}) => {
+                                    if(data.online){
+                                        const message = new Discord.MessageEmbed()
+                                            .setColor("#568135")
+                                            .setTitle("MineCraft Server Information")
+                                            .setURL("https://www.minecraft.net/zh-hant")
+                                            .addFields(
+                                                {name: "Server IP Address: ", value: `${ip}:25565`, inline: true},
+                                                {name: "Online Players", value: data.players.now, inline: true}
+                                            )
+                                            .setTimestamp()
+                                            .setAuthor("MineCraft Server Bot")
+                                            .setFooter('MineCraft Server Bot', 'https://i.imgur.com/3bXl2u1l.png');
+                                        channel.send(message)
+                                    }else{
+                                        const message = new Discord.MessageEmbed()
+                                            .setColor("#568135")
+                                            .setTitle("MineCraft Server is PROVISIONING...")
+                                            .setTimestamp()
+                                            .setDescription("Please wait 5 minutes to get server information.")
+                                            .setFooter('MineCraft Server Bot', 'https://i.imgur.com/3bXl2u1l.png');
+                                        channel.send(message)
+
+                                        channel.send(message)
+                                    }
+                                })
                             })
                         });
                     }else{
-                        channel.send("MineCraft Server is not running!")
+                        const message = new Discord.MessageEmbed()
+                            .setColor("#568135")
+                            .setTimestamp()
+                            .setTitle("MineCraft Server is not running.")
+                            .setFooter('MineCraft Server Bot', 'https://i.imgur.com/3bXl2u1l.png');
+
+                        channel.send(message)
                     }
                 })
                 break;
@@ -103,12 +137,28 @@ client.on("message", msg => {
                     if(taskData){
                         getPublicIP(taskData).then((ips) => {
                             ips.forEach((ip) => {
-                                channel.send(`MineCraft Server is on: ${ip}:25565`)
+                                const message = new Discord.MessageEmbed()
+                                    .setColor("#568135")
+                                    .setTimestamp()
+                                    .setTitle("MineCraft Server Information")
+                                    .setURL("https://www.minecraft.net/zh-hant")
+                                    .addFields(
+                                        {name: "Server IP Address: ", value: `${ip}:25565`, inline: true}
+                                    )
+                                    .setAuthor("MineCraft Server Bot")
+                                    .setFooter('MineCraft Server Bot', 'https://i.imgur.com/3bXl2u1l.png');
+                                channel.send(message)
                             })
                         });
                     }else{
                         updateService();
-                        channel.send("MineCraft Server is PROVISIONING...\nPlease wait 5 minutes to get server information.")
+                        const message = new Discord.MessageEmbed()
+                            .setColor("#568135")
+                            .setTitle("MineCraft Server is PROVISIONING...")
+                            .setTimestamp()
+                            .setDescription("Please wait 5 minutes to get server information.")
+                            .setFooter('MineCraft Server Bot', 'https://i.imgur.com/3bXl2u1l.png');
+                        channel.send(message)
                     }
                 })
                 break;
@@ -123,23 +173,23 @@ client.on("message", msg => {
                                 console.log(await rcon.send("stop"));
                                 stopService();
                                 rcon.end();
+                                const message = new Discord.MessageEmbed()
+                                    .setColor("#568135")
+                                    .setTimestamp()
+                                    .setTitle("MineCraft Server is stopping.")
+                                    .setFooter('MineCraft Server Bot', 'https://i.imgur.com/3bXl2u1l.png');
+        
+                                channel.send(message)
                             })
                         });
                     }else{
-                        channel.send("MineCraft Server is not running!")
-                    }
-                })
-                break;
-            case "status":
-                checkTasks().then(taskData => {
-                    if(taskData){
-                        getPublicIP(taskData).then((ips) => {
-                            ips.forEach((ip) => {
-                                channel.send(`MineCraft Server is on: ${ip}:25565`)
-                            })
-                        });
-                    }else{
-                        channel.send('server is not running.')
+                        const message = new Discord.MessageEmbed()
+                            .setColor("#568135")
+                            .setTimestamp()
+                            .setTitle("MineCraft Server is not running.")
+                            .setFooter('MineCraft Server Bot', 'https://i.imgur.com/3bXl2u1l.png');
+
+                        channel.send(message)
                     }
                 })
                 break;
